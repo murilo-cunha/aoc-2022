@@ -19,7 +19,13 @@ fn main() {
                 calories = calories + cal.parse::<i32>().unwrap();
             }
         }
-        println!("{:?}", cal_vec.iter().max());
+
+        let max_cal = cal_vec.iter().max().unwrap();
+        // part 1
+        println!("{}", max_cal);
+        cal_vec.sort();
+        // part 2
+        println!("{}", cal_vec.iter().rev().take(3).sum::<i32>());
     }
 }
 
