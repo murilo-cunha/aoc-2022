@@ -9,14 +9,15 @@ fn main() {
 fn pt2() {
     let first_map = HashMap::from([("A", "r"), ("B", "p"), ("C", "s")]);
     let mut total_pts: u32 = 0;
-    for line in decode_games(INPUT, first_map).split("\n") {
-        if !line.is_empty() {
-            let first: &str = line.clone().split(" ").nth(0).unwrap();
-            let second: &str = line.clone().split(" ").nth(1).unwrap();
-            let my_turn = turn(first, second);
-            total_pts += pts(second);
-            total_pts += pts_played(&my_turn);
-        }
+    for line in decode_games(INPUT, first_map)
+        .split("\n")
+        .filter(|l| !l.is_empty())
+    {
+        let first: &str = line.clone().split(" ").nth(0).unwrap();
+        let second: &str = line.clone().split(" ").nth(1).unwrap();
+        let my_turn = turn(first, second);
+        total_pts += pts(second);
+        total_pts += pts_played(&my_turn);
     }
     println!("{}", total_pts);
 }
