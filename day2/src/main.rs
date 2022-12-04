@@ -1,9 +1,45 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, fs::OpenOptions, hash::Hash};
 
 const INPUT: &str = include_str!("../input.txt");
 
 fn main() {
-    pt1();
+    pt2();
+}
+
+fn pt2() {
+    let first_map = HashMap::from([("A", "r"), ("B", "p"), ("C", "s")]);
+    let mut total_pts: u32 = 0;
+    for line in decode_games(INPUT, first_map).split("\n") {
+        if !line.is_empty() {
+            let first: &str = line.clone().split(" ").nth(0).unwrap();
+            let second: &str = line.clone().split(" ").nth(1).unwrap();
+            let my_turn = turn(first, second);
+            total_pts += pts(second);
+            total_pts += pts_played(&my_turn);
+        }
+    }
+    println!("{}", total_pts);
+}
+
+fn turn(opponent: &str, outcome: &str) -> String {
+    assert!(["r", "p", "s"].contains(&opponent));
+    let loses = HashMap::from([("r", "s"), ("s", "p"), ("p", "r")]);
+    let wins = HashMap::from([("s", "r"), ("p", "s"), ("r", "p")]);
+    if outcome.eq("X") {
+        //loses
+        return loses.get(opponent).unwrap().to_string();
+    }
+    if outcome.eq("Z") {
+        //wins
+        return wins.get(opponent).unwrap().to_string();
+    }
+    opponent.to_string() // draw
+}
+
+fn pts(outcome: &str) -> u32 {
+    assert!(["X", "Y", "Z"].contains(&outcome));
+    let outcomes: HashMap<&str, u32> = HashMap::from([("X", 0), ("Y", 3), ("Z", 6)]);
+    outcomes.get(outcome).unwrap().clone()
 }
 
 fn pt1() {
@@ -33,13 +69,11 @@ fn pt1() {
         let decoded = decode_games(INPUT, map);
 
         let mut pts = 0;
-        for game in decoded.split("\n") {
-            if !game.is_empty() {
-                let first: &str = game.clone().split(" ").nth(0).unwrap();
-                let second: &str = game.clone().split(" ").nth(1).unwrap();
-                pts += pts_second(first, second);
-                pts += pts_played(second);
-            }
+        for game in decoded.split("\n").filter(|g| !g.is_empty()) {
+            let first: &str = game.clone().split(" ").nth(0).unwrap();
+            let second: &str = game.clone().split(" ").nth(1).unwrap();
+            pts += pts_second(first, second);
+            pts += pts_played(second);
         }
         println!("{}", pts);
     }
@@ -54,7 +88,7 @@ fn decode_games(txt: &str, map: HashMap<&str, &str>) -> String {
 }
 
 fn pts_second(first: &str, second: &str) -> u32 {
-    assert!(["r","p","s"].contains(&first) && ["r","p","s"].contains(&second));
+    assert!(["r", "p", "s"].contains(&first) && ["r", "p", "s"].contains(&second));
     if first.eq(second) {
         return 3; // draw
     }
@@ -66,7 +100,7 @@ fn pts_second(first: &str, second: &str) -> u32 {
 }
 
 fn pts_played(s: &str) -> u32 {
-    assert!(["r","p","s"].contains(&s));
+    assert!(["r", "p", "s"].contains(&s));
     if s.eq("r") {
         return 1;
     }
