@@ -12,18 +12,21 @@ fn main() {
 fn pt1(input_vec: Vec<&str>, prio_vec: Vec<&str>) {
     let mut total_prio = 0;
     for rucksack in input_vec {
-        total_prio += get_prio(rucksack, prio_vec.clone());
+        total_prio += get_prio_sack(rucksack, prio_vec.clone());
     }
     println!("{}", total_prio);
 }
 
-fn get_prio(seq: &str, prio_vec: Vec<&str>) -> usize {
+fn get_prio_sack(seq: &str, prio_vec: Vec<&str>) -> usize {
     let (p1, p2) = split_half(seq);
     let hash1: HashSet<&str> = p1.split("").collect();
     let hash2: HashSet<&str> = p2.split("").collect();
     let intersection = intersect(hash1, hash2);
 
-    prio_vec.iter().position(|r| r.eq(&intersection)).unwrap()
+    item2prio(prio_vec, &intersection)
+}
+fn item2prio(prio_vec: Vec<&str>, el: &str) -> usize {
+    prio_vec.iter().position(|r| r.eq(&el)).unwrap()
 }
 fn split_half(seq: &str) -> (&str, &str) {
     let len = seq.len();
